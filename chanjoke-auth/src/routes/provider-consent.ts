@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { FhirApi } from "../lib/utils";
-import { deleteResetCode, findKeycloakUser, getCurrentUserInfo, getKeycloakUserToken, getKeycloakUsers, registerKeycloakUser, updateUserPassword, updateUserProfile, validateResetCode, refreshToken } from './../lib/keycloak'
+import { deleteResetCode, findKeycloakUser, getCurrentUserInfo, getKeycloakUserToken, getKeycloakUsers, registerKeycloakUser, updateUserPassword, updateUserProfile, validateResetCode, refreshToken } from '../lib/keycloak'
 import { v4 } from "uuid";
 import { sendPasswordResetEmail, sendRegistrationConfirmationEmail } from "../lib/email";
 import { getSupersetGuestToken } from "../lib/superset";
@@ -8,17 +8,6 @@ import { getSupersetGuestToken } from "../lib/superset";
 const router = express.Router();
 router.use(express.json());
 
-const allowedRoles = [
-    "ADMINISTRATOR", "NATIONAL_SYSTEM_ADMINISTRATOR", "COUNTY_SYSTEM_ADMINISTRATOR",
-    "SUB_COUNTY_SYSTEM_ADMINISTRATOR", "SUB_COUNTY_STORE_MANAGER", "FACILITY_SYSTEM_ADMINISTRATOR", "CLERK", "NURSE"];
-
-const heirachy = [
-    { country: "COUNTRY" },
-    { county: "COUNTY" },
-    { subCounty: "SUB-COUNTY" },
-    { ward: "WARD" },
-    { facility: "FACILITY" }
-]
 
 const generatePassword = (length: number) =>
     Array.from({ length }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+~`|}{[]:;?><,./-='.charAt(Math.floor(Math.random() * 94))).join('');
@@ -33,11 +22,6 @@ router.post("/register", async (req: Request, res: Response) => {
 
         role = String(role).toUpperCase();
 
-        if (allowedRoles.indexOf(role) < 0) {
-            res.statusCode = 400;
-            res.json({ status: "error", error: `invalid role provided. Allowed roles: ${allowedRoles.join(",")}` });
-            return;
-        }
         console.log(req.body);
         if (!idNumber || !firstName || !lastName || !role || !email) {
 
